@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baxtify - Global Cloud Player</title>
+
+  <!-- Website Favicon Icon (128x128) -->
+  <link rel="icon" type="image/jpeg" sizes="128x128" href="baxtify.jpg">
+  <link rel="apple-touch-icon" href="baxtify.jpg">
+
+  <!-- Custom Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Finger+Paint&display=swap" rel="stylesheet">
+  
+  <!-- Primary CDN: unpkg -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <!-- Fallback CDN: jsDelivr (Loads automatically if unpkg fails/blocked) -->
+  <script>
+    if (!window.supabase) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
+    }
+  </script>
+
+  <!-- Counter -->
+  <script src="https://cdn.counter.dev/script.js" data-id="57d410f5-5d4d-4719-9913-da74355da1df" data-utcoffset="5"></script>
+
+  <style>
+    :root {
+      --bg-color: #000000;
+      --accent-color: white;
+      --font-family: 'Finger Paint', cursive;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--accent-color);
+      font-family: var(--font-family);
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h1, h2 { 
+      text-shadow: 0 0 8px var(--accent-color); 
+      text-align: center; 
+      margin-bottom: 15px;
+      margin-top: 0;
+    }
+
+    /* Main Card Container with Intense Glowing Rainbow Border */
+    .card-wrapper {
+      position: relative;
+      width: 90dvw;
+      margin-bottom: 20px;
+    }
+
+    .card-border-glow {
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      z-index: 0;
+      border-radius: 35px;
+      background: radial-gradient(
+        circle at 50% 50%,
+        #ff0000,
+        #ff7f00,
+        #ffff00,
+        #00ff00,
+        #00ffff,
+        #0000ff,
+        #8b00ff,
+        #ff0000
+      );
+      background-size: 300% 300%;
+      animation: rainbowGlow 6s ease infinite;
+      /* Intense Outer Glow Effects */
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 16px rgba(0, 255, 255, 0.6));
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      padding: 16px;
+      background-color: var(--bg-color);
+      border-radius: 32px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Reusable Wrapper for Glowing Rainbow Borders */
+    .glow-border-box {
+      position: relative;
+      width: 100%;
+      margin: 6px 0;
+      border-radius: 32px;
+    }
+
+    .glow-border-box::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      z-index: 0;
+      border-radius: 34px;
+      background: radial-gradient(
+        circle at 50% 50%,
+        #ff0000,
+        #ff7f00,
+        #ffff00,
+        #00ff00,
+        #00ffff,
+        #0000ff,
+        #8b00ff,
+        #ff0000
+      );
+      background-size: 300% 300%;
+      animation: rainbowGlow 6s ease infinite;
+      /* Glowing Effects for Elements */
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 12px rgba(255, 0, 255, 0.5));
+    }
+
+    @keyframes rainbowGlow {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* Audio Player Section */
+    .player-wrapper {
+      position: relative;
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+
+    audio {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: block;
+      border-radius: 32px;
+      background-color: var(--bg-color);
+      filter: invert(100%) hue-rotate(90deg);
+    }
+
+    /* Input Fields and Select Dropdown styling inside glow wrappers */
+    input[type="text"], select {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      background: var(--bg-color);
+      border: none;
+      color: var(--accent-color);
+      font-family: var(--font-family);
+      padding: 10px 16px;
+      outline: none;
+      border-radius: 32px;
+      display: block;
+    }
+
+    select option {
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    .custom-file-wrapper {
+      margin: 10px 0;
+      width: 100%;
+    }
+
+    #file-input {
+      position: relative;
+      z-index: 1;
+      font-family: var(--font-family);
+      font-size: small;
+      background: var(--bg-color);
+      border: none;
+      border-radius: 32px;
+      padding: 10px 16px;
+      display: block;
+      width: 100%;
+      color: white;
+    }
+
+    .file-name-status {
+      font-size: 10px;
+      text-align: center;
+      margin-top: 6px;
+      color: var(--accent-color);
+      word-break: break-all;
+    }
+
+    /* Global Upload Button */
+    button#upload-btn {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      background-color: var(--bg-color);
+      color: var(--accent-color);
+      font-family: var(--font-family);
+      border: none;
+      padding: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 32px;
+      display: block;
+    }
+
+    button#upload-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Clean Play Button without glowing borders */
+    .play-btn {
+      width: auto;
+      padding: 6px 16px;
+      margin: 0;
+      background-color: var(--accent-color);
+      color: var(--bg-color);
+      font-family: var(--font-family);
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 32px;
+    }
+
+    /* Loading Progress Bar Styles with Glowing Rainbow Border */
+    .progress-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 14px;
+      background-color: black;
+      border-radius: 32px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--accent-color);
+      transition: width 0.3s ease-in-out;
+      box-shadow: 0 0 12px var(--accent-color);
+      border-radius: 32px;
+    }
+
+    .progress-text {
+      font-size: 11px;
+      text-align: center;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .song-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed var(--accent-color);
+      padding: 10px 0;
+    }
+
+    .status-text {
+      font-size: 11px;
+      text-align: center;
+      margin-top: 6px;
+      word-break: break-all;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 20px 0 10px 0;
+      text-align: center;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 5px var(--accent-color);
+    }
+
+    .hidden { display: none !important; }
+
+    #logo {
+      height: 50px;
+      width: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    #brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="brand">
+    <img src="baxtify.jpg" id="logo" alt="Baxtify Logo">
+    <h1>Baxtify</h1>
+  </div>
+
+  <div class="card-wrapper">
+    <!-- Glowing Animated Rainbow Border for Main Card -->
+    <div class="card-border-glow"></div>
+
+    <div class="card">
+      <h2>NOW PLAYING</h2>
+      <div id="now-playing-info" style="text-align: center; font-size: 14px; margin-bottom: 8px;">
+        Select a track from the playlist...
+      </div>
+
+      <!-- Player wrapper hidden by default, appears on play -->
+      <div id="player-wrapper" class="player-wrapper glow-border-box hidden">
+        <audio id="audio-player" controls></audio>
+      </div>
+
+      <h2>UPLOAD TO CLOUD (.MP3)</h2>
+      <form id="upload-form">
+        <div class="glow-border-box">
+          <input type="text" id="song-title" placeholder="Song Title" required>
+        </div>
+
+        <div class="glow-border-box">
+          <input type="text" id="artist-name" placeholder="Artist Name" required>
+        </div>
+        
+        <div class="custom-file-wrapper glow-border-box">
+          <input type="file" id="file-input" accept="audio/*" required>
+        </div>
+        <div id="file-chosen-text" class="file-name-status" style="display: none;"></div>
+
+        <div class="glow-border-box" style="margin-top: 10px;">
+          <button type="submit" id="upload-btn">UPLOAD & SHARE GLOBALLY</button>
+        </div>
+        <div id="upload-status" class="status-text"></div>
+      </form>
+
+      <h2>GLOBAL PLAYLIST</h2>
+
+      <!-- Dynamic Artist Filter Dropdown -->
+      <div class="glow-border-box" style="margin-bottom: 10px;">
+        <select id="artist-select">
+          <option value="ALL">-- Filter By Artist (All Artists) --</option>
+        </select>
+      </div>
+      
+      <!-- Dynamic Percentage Progress Bar with Glowing Rainbow Border -->
+      <div class="glow-border-box" style="margin: 6px 0;">
+        <div class="progress-container">
+          <div id="progress-bar" class="progress-bar"></div>
+        </div>
+      </div>
+      <div id="progress-text" class="progress-text">Loaded 0% (0 / 0 tracks)</div>
+
+      <div id="playlist">Syncing tracks...</div>
+    </div>
+  </div>
+
+  <footer>
+    <div>Dev Baxti Studio. 2026</div>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = "https://cylpyvhqpoywwqbhtmsm.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5bHB5dmhxcG95d3dxYmh0bXNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NDg1NDEsImV4cCI6MjEwMzEyNDU0MX0.vJpmkBKaTkh1bvZpWcdlnccjDdT1mGUCFcyc2Osjwic";
+
+    let supabaseClient;
+    let globalTracksList = []; // Array to store fetched tracks globally
+
+    const uploadForm = document.getElementById("upload-form");
+    const songTitleInput = document.getElementById("song-title");
+    const artistNameInput = document.getElementById("artist-name");
+    const fileInput = document.getElementById("file-input");
+    const fileChosenText = document.getElementById("file-chosen-text");
+    const uploadBtn = document.getElementById("upload-btn");
+    const uploadStatus = document.getElementById("upload-status");
+
+    const artistSelect = document.getElementById("artist-select");
+    const playlist = document.getElementById("playlist");
+    const playerWrapper = document.getElementById("player-wrapper");
+    const audioPlayer = document.getElementById("audio-player");
+    const nowPlayingInfo = document.getElementById("now-playing-info");
+    const progressBar = document.getElementById("progress-bar");
+    const progressText = document.getElementById("progress-text");
+
+    function initSupabase() {
+      if (window.supabase && window.supabase.createClient) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        return true;
+      }
+      return false;
+    }
+
+    fileInput.addEventListener("change", function() {
+      if (this.files && this.files.length > 0) {
+        const file = this.files[0];
+        let baseName = file.name.replace(/\.[^/.]+$/, "");
+
+        if (baseName.includes("-")) {
+          const parts = baseName.split("-");
+          artistNameInput.value = parts[0].trim();
+          songTitleInput.value = parts.slice(1).join("-").trim();
+        } else {
+          songTitleInput.value = baseName.trim();
+          artistNameInput.value = "Unknown Artist";
+        }
+
+        fileChosenText.innerText = `Selected: ${file.name}`;
+        fileChosenText.style.display = "block";
+      } else {
+        fileChosenText.innerText = "";
+        fileChosenText.style.display = "none";
+      }
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      if (initSupabase()) {
+        loadGlobalPlaylist();
+      } else {
+        let attempts = 0;
+        const interval = setInterval(() => {
+          attempts++;
+          if (initSupabase()) {
+            clearInterval(interval);
+            loadGlobalPlaylist();
+          } else if (attempts >= 4) {
+            clearInterval(interval);
+            playlist.innerHTML = "<p style='color:#ff3333; text-align:center;'>CDN network blocked or restricted. Please open in Chrome browser.</p>";
+          }
+        }, 800);
+      }
+    });
+
+    uploadForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const file = fileInput.files[0];
+
+      if (!supabaseClient) {
+        if (!initSupabase()) {
+          uploadStatus.style.color = "#ff3333";
+          uploadStatus.innerText = "Please refresh the page.";
+          return;
+        }
+      }
+
+      uploadBtn.disabled = true;
+      uploadStatus.style.color = "#11ff00";
+      uploadStatus.innerText = "Uploading .mp3 to Baxtify...";
+
+      try {
+        const customTitle = songTitleInput.value.trim();
+        const customArtist = artistNameInput.value.trim();
+        
+        const fileExt = file.name.split('.').pop();
+        const cleanTitle = customTitle.replace(/[^a-zA-Z0-9]/g, "_");
+        const cleanArtist = customArtist.replace(/[^a-zA-Z0-9]/g, "_");
+        const fileName = `${cleanArtist}_-_${cleanTitle}_${Date.now()}.${fileExt}`;
+
+        const { error: uploadError } = await supabaseClient.storage
+          .from('songs')
+          .upload(fileName, file, { contentType: 'audio/mpeg', upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        uploadStatus.innerText = "Upload complete! Updating playlist...";
+        uploadForm.reset();
+        fileChosenText.style.display = "none";
+
+        setTimeout(() => {
+          loadGlobalPlaylist();
+          uploadStatus.innerText = "Track synced successfully!";
+        }, 1000);
+
+      } catch (err) {
+        uploadStatus.style.color = "#ff3333";
+        uploadStatus.innerText = `Upload failed: ${err.message || JSON.stringify(err)}`;
+      } finally {
+        uploadBtn.disabled = false;
+      }
+    });
+
+    async function loadGlobalPlaylist() {
+      if (!supabaseClient) {
+        if (!initSupabase()) return;
+      }
+
+      try {
+        const { data: files, error } = await supabaseClient.storage
+          .from('songs')
+          .list('', { limit: 100, offset: 0, sortBy: { column: 'created_at', order: 'desc' } });
+
+        if (error) throw error;
+
+        playlist.innerHTML = "";
+
+        const validFiles = files ? files.filter(f => f.name && f.name !== '.emptyFolderPlaceholder' && !f.name.startsWith('.')) : [];
+        const totalFiles = validFiles.length;
+
+        if (totalFiles === 0) {
+          progressBar.style.width = "100%";
+          progressText.innerText = "Loaded 100% (0 / 0 tracks)";
+          playlist.innerHTML = "<p style='text-align:center;'>No tracks found in cloud storage.</p>";
+          return;
+        }
+
+        // Parse files into global array
+        globalTracksList = validFiles.map((file) => {
+          const { data: urlData } = supabaseClient.storage
+            .from('songs')
+            .getPublicUrl(file.name);
+
+          let displayTitle = file.name.replace(/_\d+\.[^/.]+$/, "").replace(/_/g, " ");
+          let artistName = "Unknown Artist";
+
+          if (displayTitle.includes(" - ")) {
+            const parts = displayTitle.split(" - ");
+            artistName = parts[0].trim();
+          }
+
+          return {
+            url: urlData.publicUrl,
+            displayTitle: displayTitle,
+            artistName: artistName
+          };
+        });
+
+        // Update dropdown list dynamically with unique artists
+        updateArtistDropdown();
+
+        // Render initial playlist view
+        renderPlaylist();
+
+      } catch (err) {
+        playlist.innerHTML = `<p style='text-align:center; color:#ff3333;'>Sync Error: ${err.message || JSON.stringify(err)}</p>`;
+        progressText.innerText = "Loaded 0% (Connection Error)";
+        progressBar.style.width = "0%";
+      }
+    }
+
+    // Populate artist options inside <select>
+    function updateArtistDropdown() {
+      const selectedValue = artistSelect.value;
+      artistSelect.innerHTML = '<option value="ALL">-- Filter By Artist (All Artists) --</option>';
+
+      // Extract unique artists and sort them alphabetically
+      const artists = [...new Set(globalTracksList.map(t => t.artistName))]
+        .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+      artists.forEach(artist => {
+        const opt = document.createElement("option");
+        opt.value = artist;
+        opt.textContent = artist;
+        artistSelect.appendChild(opt);
+      });
+
+      // Preserve previously selected artist if still present
+      if (artists.includes(selectedValue)) {
+        artistSelect.value = selectedValue;
+      }
+    }
+
+    // Render tracks based on select menu filter
+    function renderPlaylist() {
+      playlist.innerHTML = "";
+      const selectedArtist = artistSelect.value;
+
+      let filteredTracks = globalTracksList;
+      if (selectedArtist !== "ALL") {
+        filteredTracks = globalTracksList.filter(t => t.artistName === selectedArtist);
+      }
+
+      if (filteredTracks.length === 0) {
+        playlist.innerHTML = "<p style='text-align:center;'>No tracks found for selected artist.</p>";
+        return;
+      }
+
+      let loadedCount = 0;
+      const totalCount = filteredTracks.length;
+
+      filteredTracks.forEach((track) => {
+        const div = document.createElement("div");
+        div.className = "song-item";
+        div.innerHTML = `
+          <div>
+            <strong>${track.displayTitle}</strong>
+          </div>
+          <button class="play-btn" onclick="playTrack('${track.url}', '${track.displayTitle}')">PLAY</button>
+        `;
+        playlist.appendChild(div);
+
+        loadedCount++;
+        const currentPercent = Math.round((loadedCount / totalCount) * 100);
+
+        progressBar.style.width = `${currentPercent}%`;
+        progressText.innerText = `Showing ${loadedCount} / ${totalCount} tracks`;
+      });
+    }
+
+    // Event listener for select element changes
+    artistSelect.addEventListener("change", renderPlaylist);
+
+    window.playTrack = function(url, title) {
+      nowPlayingInfo.innerText = `Playing: ${title}`;
+      playerWrapper.classList.remove("hidden");
+      audioPlayer.src = url;
+      audioPlayer.play();
+    };
+  </script>
+</body>
+</html>
