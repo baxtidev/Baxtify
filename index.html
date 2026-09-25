@@ -17,7 +17,7 @@
   <!-- Primary CDN: unpkg -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-  <!-- Fallback CDN: jsDelivr (Loads automatically if unpkg fails/blocked) -->
+  <!-- Fallback CDN: jsDelivr -->
   <script>
     if (!window.supabase) {
       document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
@@ -55,7 +55,33 @@
       margin-top: 0;
     }
 
-    /* Main Card Container with Intense Glowing Rainbow Border */
+    /* Navigation Bar */
+    nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .nav-btn {
+      background-color: var(--bg-color);
+      color: var(--accent-color);
+      font-family: var(--font-family);
+      border: 1px solid var(--accent-color);
+      padding: 8px 14px;
+      border-radius: 32px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn.active, .nav-btn:hover {
+      background-color: var(--accent-color);
+      color: var(--bg-color);
+    }
+
+    /* Main Card Container with Glowing Rainbow Border */
     .card-wrapper {
       position: relative;
       width: 90dvw;
@@ -83,7 +109,6 @@
       );
       background-size: 300% 300%;
       animation: rainbowGlow 6s ease infinite;
-      /* Intense Outer Glow Effects */
       filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 16px rgba(0, 255, 255, 0.6));
     }
 
@@ -96,6 +121,15 @@
       border-radius: 32px;
       display: flex;
       flex-direction: column;
+    }
+
+    /* Page Views */
+    .page-view {
+      display: none;
+    }
+
+    .page-view.active {
+      display: block;
     }
 
     /* Reusable Wrapper for Glowing Rainbow Borders */
@@ -128,20 +162,13 @@
       );
       background-size: 300% 300%;
       animation: rainbowGlow 6s ease infinite;
-      /* Glowing Effects for Elements */
       filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 12px rgba(255, 0, 255, 0.5));
     }
 
     @keyframes rainbowGlow {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     /* Audio Player Section */
@@ -162,8 +189,8 @@
       filter: invert(100%) hue-rotate(90deg);
     }
 
-    /* Input Fields and Select Dropdown styling inside glow wrappers */
-    input[type="text"], select {
+    /* Inputs, Selects, and Textareas */
+    input[type="text"], input[type="email"], textarea, select {
       position: relative;
       z-index: 1;
       width: 100%;
@@ -175,6 +202,12 @@
       outline: none;
       border-radius: 32px;
       display: block;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+      border-radius: 20px;
     }
 
     select option {
@@ -209,8 +242,8 @@
       word-break: break-all;
     }
 
-    /* Global Upload Button */
-    button#upload-btn {
+    /* Action Buttons */
+    button.submit-btn {
       position: relative;
       z-index: 1;
       width: 100%;
@@ -225,12 +258,11 @@
       display: block;
     }
 
-    button#upload-btn:disabled {
+    button.submit-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
 
-    /* Clean Play Button without glowing borders */
     .play-btn {
       width: auto;
       padding: 6px 16px;
@@ -244,7 +276,7 @@
       border-radius: 32px;
     }
 
-    /* Loading Progress Bar Styles with Glowing Rainbow Border */
+    /* Progress Bar */
     .progress-container {
       position: relative;
       z-index: 1;
@@ -319,60 +351,115 @@
     <h1>Baxtify</h1>
   </div>
 
+  <!-- Navigation Menu -->
+  <nav>
+    <button class="nav-btn active" onclick="switchPage('home')">HOME</button>
+    <button class="nav-btn" onclick="switchPage('listen')">LISTEN</button>
+    <button class="nav-btn" onclick="switchPage('upload')">UPLOAD</button>
+    <button class="nav-btn" onclick="switchPage('contact')">CONTACT</button>
+  </nav>
+
   <div class="card-wrapper">
-    <!-- Glowing Animated Rainbow Border for Main Card -->
     <div class="card-border-glow"></div>
 
     <div class="card">
-      <h2>NOW PLAYING</h2>
-      <div id="now-playing-info" style="text-align: center; font-size: 14px; margin-bottom: 8px;">
-        Select a track from the playlist...
-      </div>
 
-      <!-- Player wrapper hidden by default, appears on play -->
+      <!-- Universal Sticky Audio Player (Appears when track plays) -->
       <div id="player-wrapper" class="player-wrapper glow-border-box hidden">
+        <div id="now-playing-info" style="text-align: center; font-size: 13px; margin: 6px 0; color: var(--accent-color);">
+          Select a track...
+        </div>
         <audio id="audio-player" controls></audio>
       </div>
 
-      <h2>UPLOAD TO CLOUD (.MP3)</h2>
-      <form id="upload-form">
-        <div class="glow-border-box">
-          <input type="text" id="song-title" placeholder="Song Title" required>
-        </div>
-
-        <div class="glow-border-box">
-          <input type="text" id="artist-name" placeholder="Artist Name" required>
-        </div>
-        
-        <div class="custom-file-wrapper glow-border-box">
-          <input type="file" id="file-input" accept="audio/*" required>
-        </div>
-        <div id="file-chosen-text" class="file-name-status" style="display: none;"></div>
-
-        <div class="glow-border-box" style="margin-top: 10px;">
-          <button type="submit" id="upload-btn">UPLOAD & SHARE GLOBALLY</button>
-        </div>
-        <div id="upload-status" class="status-text"></div>
-      </form>
-
-      <h2>GLOBAL PLAYLIST</h2>
-
-      <!-- Dynamic Artist Filter Dropdown -->
-      <div class="glow-border-box" style="margin-bottom: 10px;">
-        <select id="artist-select">
-          <option value="ALL">-- Filter By Artist (All Artists) --</option>
-        </select>
-      </div>
-      
-      <!-- Dynamic Percentage Progress Bar with Glowing Rainbow Border -->
-      <div class="glow-border-box" style="margin: 6px 0;">
-        <div class="progress-container">
-          <div id="progress-bar" class="progress-bar"></div>
+      <!-- PAGE 1: HOME -->
+      <div id="page-home" class="page-view active">
+        <h2>WELCOME TO BAXTIFY</h2>
+        <p style="text-align: center; font-size: 13px; line-height: 1.6;">
+          Your decentralized cloud audio station. Stream music globally or upload your own tracks directly to the network.
+        </p>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+          <button class="play-btn" onclick="switchPage('listen')">EXPLORE PLAYLIST</button>
+          <button class="play-btn" onclick="switchPage('upload')">UPLOAD TRACK</button>
         </div>
       </div>
-      <div id="progress-text" class="progress-text">Loaded 0% (0 / 0 tracks)</div>
 
-      <div id="playlist">Syncing tracks...</div>
+      <!-- PAGE 2: LISTEN (SEARCH & PLAYLIST) -->
+      <div id="page-listen" class="page-view">
+        <h2>GLOBAL PLAYLIST</h2>
+
+        <!-- Search Bar with Live Filtering -->
+        <div class="glow-border-box">
+          <input type="text" id="search-input" placeholder="Search title, artist or type...">
+        </div>
+
+        <!-- Music Type Filter Dropdown -->
+        <div class="glow-border-box" style="margin-top: 8px;">
+          <select id="type-select">
+            <option value="ALL">-- Filter By Music Type (All Types) --</option>
+          </select>
+        </div>
+
+        <!-- Dynamic Progress Bar -->
+        <div class="glow-border-box" style="margin: 10px 0 6px 0;">
+          <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+        </div>
+        <div id="progress-text" class="progress-text">Loaded 0% (0 / 0 tracks)</div>
+
+        <div id="playlist">Syncing tracks...</div>
+      </div>
+
+      <!-- PAGE 3: UPLOAD -->
+      <div id="page-upload" class="page-view">
+        <h2>UPLOAD TO CLOUD (.MP3)</h2>
+        <form id="upload-form">
+          <div class="glow-border-box">
+            <input type="text" id="song-title" placeholder="Song Title" required>
+          </div>
+
+          <div class="glow-border-box">
+            <input type="text" id="artist-name" placeholder="Artist Name" required>
+          </div>
+
+          <!-- Music Type Input Field -->
+          <div class="glow-border-box">
+            <input type="text" id="music-type" placeholder="Music Type (e.g. Pop, Rap, Lo-Fi, Uzbek Pop)" required>
+          </div>
+          
+          <div class="custom-file-wrapper glow-border-box">
+            <input type="file" id="file-input" accept="audio/*" required>
+          </div>
+          <div id="file-chosen-text" class="file-name-status" style="display: none;"></div>
+
+          <div class="glow-border-box" style="margin-top: 10px;">
+            <button type="submit" id="upload-btn" class="submit-btn">UPLOAD & SHARE GLOBALLY</button>
+          </div>
+          <div id="upload-status" class="status-text"></div>
+        </form>
+      </div>
+
+      <!-- PAGE 4: CONTACT (FORMSPREE INTEGRATED) -->
+      <div id="page-contact" class="page-view">
+        <h2>GET IN TOUCH</h2>
+        <form id="contact-form">
+          <div class="glow-border-box">
+            <input type="text" name="name" placeholder="Your Name" required>
+          </div>
+          <div class="glow-border-box">
+            <input type="email" name="email" placeholder="Your Email" required>
+          </div>
+          <div class="glow-border-box">
+            <textarea name="message" placeholder="Your Message..." required></textarea>
+          </div>
+          <div class="glow-border-box" style="margin-top: 10px;">
+            <button type="submit" id="contact-btn" class="submit-btn">SEND MESSAGE</button>
+          </div>
+          <div id="contact-status" class="status-text"></div>
+        </form>
+      </div>
+
     </div>
   </div>
 
@@ -381,21 +468,42 @@
   </footer>
 
   <script>
+    // Configuration
     const SUPABASE_URL = "https://cylpyvhqpoywwqbhtmsm.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5bHB5dmhxcG95d3dxYmh0bXNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NDg1NDEsImV4cCI6MjEwMzEyNDU0MX0.vJpmkBKaTkh1bvZpWcdlnccjDdT1mGUCFcyc2Osjwic";
+    
+    // Formspree Endpoint URL
+    const FORMSPREE_ENDPOINT = "https://formspree.io/f/mzezajdz";
 
     let supabaseClient;
-    let globalTracksList = []; // Array to store fetched tracks globally
+    let globalTracksList = [];
 
+    // Page Switching Logic
+    function switchPage(pageId) {
+      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      const selectedPage = document.getElementById(`page-${pageId}`);
+      if (selectedPage) selectedPage.classList.add('active');
+
+      const activeNavBtn = Array.from(document.querySelectorAll('.nav-btn')).find(
+        btn => btn.getAttribute('onclick').includes(pageId)
+      );
+      if (activeNavBtn) activeNavBtn.classList.add('active');
+    }
+
+    // Elements
     const uploadForm = document.getElementById("upload-form");
     const songTitleInput = document.getElementById("song-title");
     const artistNameInput = document.getElementById("artist-name");
+    const musicTypeInput = document.getElementById("music-type");
     const fileInput = document.getElementById("file-input");
     const fileChosenText = document.getElementById("file-chosen-text");
     const uploadBtn = document.getElementById("upload-btn");
     const uploadStatus = document.getElementById("upload-status");
 
-    const artistSelect = document.getElementById("artist-select");
+    const searchInput = document.getElementById("search-input");
+    const typeSelect = document.getElementById("type-select");
     const playlist = document.getElementById("playlist");
     const playerWrapper = document.getElementById("player-wrapper");
     const audioPlayer = document.getElementById("audio-player");
@@ -403,12 +511,37 @@
     const progressBar = document.getElementById("progress-bar");
     const progressText = document.getElementById("progress-text");
 
+    const contactForm = document.getElementById("contact-form");
+    const contactBtn = document.getElementById("contact-btn");
+    const contactStatus = document.getElementById("contact-status");
+
     function initSupabase() {
       if (window.supabase && window.supabase.createClient) {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         return true;
       }
       return false;
+    }
+
+    // Auto-detect music type for existing songs without specified tag
+    function detectMusicType(text) {
+      const str = text.toLowerCase();
+      if (str.includes("rap") || str.includes("hip hop") || str.includes("konsta") || str.includes("masa") || str.includes("shoxrux")) {
+        return "Rap";
+      }
+      if (str.includes("pop") || str.includes("rayhon") || str.includes("jackson") || str.includes("astley")) {
+        return "Pop";
+      }
+      if (str.includes("lofi") || str.includes("lo-fi") || str.includes("chill")) {
+        return "Lo-Fi";
+      }
+      if (str.includes("rock") || str.includes("band")) {
+        return "Rock";
+      }
+      if (str.includes("remix") || str.includes("mix")) {
+        return "Remix";
+      }
+      return "Pop / Variety";
     }
 
     fileInput.addEventListener("change", function() {
@@ -424,6 +557,8 @@
           songTitleInput.value = baseName.trim();
           artistNameInput.value = "Unknown Artist";
         }
+
+        musicTypeInput.value = detectMusicType(baseName);
 
         fileChosenText.innerText = `Selected: ${file.name}`;
         fileChosenText.style.display = "block";
@@ -451,6 +586,7 @@
       }
     });
 
+    // Upload Handler
     uploadForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const file = fileInput.files[0];
@@ -470,11 +606,15 @@
       try {
         const customTitle = songTitleInput.value.trim();
         const customArtist = artistNameInput.value.trim();
+        const customType = musicTypeInput.value.trim();
         
         const fileExt = file.name.split('.').pop();
         const cleanTitle = customTitle.replace(/[^a-zA-Z0-9]/g, "_");
         const cleanArtist = customArtist.replace(/[^a-zA-Z0-9]/g, "_");
-        const fileName = `${cleanArtist}_-_${cleanTitle}_${Date.now()}.${fileExt}`;
+        const cleanType = customType.replace(/[^a-zA-Z0-9]/g, "_");
+        
+        // Format: TYPE_--_ARTIST_-_TITLE_TIMESTAMP.mp3
+        const fileName = `${cleanType}_--_${cleanArtist}_-_${cleanTitle}_${Date.now()}.${fileExt}`;
 
         const { error: uploadError } = await supabaseClient.storage
           .from('songs')
@@ -489,6 +629,7 @@
         setTimeout(() => {
           loadGlobalPlaylist();
           uploadStatus.innerText = "Track synced successfully!";
+          switchPage('listen');
         }, 1000);
 
       } catch (err) {
@@ -499,6 +640,39 @@
       }
     });
 
+    // Contact Form Handler
+    contactForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      contactBtn.disabled = true;
+      contactStatus.style.color = "#11ff00";
+      contactStatus.innerText = "Sending message...";
+
+      const data = new FormData(contactForm);
+
+      try {
+        const response = await fetch(FORMSPREE_ENDPOINT, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          contactStatus.style.color = "#11ff00";
+          contactStatus.innerText = "send successfully";
+          contactForm.reset();
+        } else {
+          const resData = await response.json();
+          throw new Error(resData.error || "Submission failed");
+        }
+      } catch (err) {
+        contactStatus.style.color = "#ff3333";
+        contactStatus.innerText = `Error: ${err.message}`;
+      } finally {
+        contactBtn.disabled = false;
+      }
+    });
+
+    // Load Playlist from Storage
     async function loadGlobalPlaylist() {
       if (!supabaseClient) {
         if (!initSupabase()) return;
@@ -523,31 +697,33 @@
           return;
         }
 
-        // Parse files into global array
         globalTracksList = validFiles.map((file) => {
           const { data: urlData } = supabaseClient.storage
             .from('songs')
             .getPublicUrl(file.name);
 
-          let displayTitle = file.name.replace(/_\d+\.[^/.]+$/, "").replace(/_/g, " ");
-          let artistName = "Unknown Artist";
+          let fileNameRaw = file.name.replace(/_\d+\.[^/.]+$/, "");
+          let musicType = "";
+          let displayTitle = fileNameRaw.replace(/_/g, " ");
 
-          if (displayTitle.includes(" - ")) {
-            const parts = displayTitle.split(" - ");
-            artistName = parts[0].trim();
+          // Check if filename contains music type indicator (_--_)
+          if (fileNameRaw.includes("_--_")) {
+            const parts = fileNameRaw.split("_--_");
+            musicType = parts[0].replace(/_/g, " ").trim();
+            displayTitle = parts[1].replace(/_/g, " ").trim();
+          } else {
+            // Smart auto-detection for older uploaded tracks
+            musicType = detectMusicType(displayTitle);
           }
 
           return {
             url: urlData.publicUrl,
             displayTitle: displayTitle,
-            artistName: artistName
+            musicType: musicType
           };
         });
 
-        // Update dropdown list dynamically with unique artists
-        updateArtistDropdown();
-
-        // Render initial playlist view
+        updateTypeDropdown();
         renderPlaylist();
 
       } catch (err) {
@@ -557,40 +733,48 @@
       }
     }
 
-    // Populate artist options inside <select>
-    function updateArtistDropdown() {
-      const selectedValue = artistSelect.value;
-      artistSelect.innerHTML = '<option value="ALL">-- Filter By Artist (All Artists) --</option>';
+    function updateTypeDropdown() {
+      const selectedValue = typeSelect.value;
+      typeSelect.innerHTML = '<option value="ALL">-- Filter By Music Type (All Types) --</option>';
 
-      // Extract unique artists and sort them alphabetically
-      const artists = [...new Set(globalTracksList.map(t => t.artistName))]
+      const types = [...new Set(globalTracksList.map(t => t.musicType))]
         .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
-      artists.forEach(artist => {
+      types.forEach(type => {
         const opt = document.createElement("option");
-        opt.value = artist;
-        opt.textContent = artist;
-        artistSelect.appendChild(opt);
+        opt.value = type;
+        opt.textContent = type;
+        typeSelect.appendChild(opt);
       });
 
-      // Preserve previously selected artist if still present
-      if (artists.includes(selectedValue)) {
-        artistSelect.value = selectedValue;
+      if (types.includes(selectedValue)) {
+        typeSelect.value = selectedValue;
       }
     }
 
-    // Render tracks based on select menu filter
+    // Dynamic Search & Filter Function
     function renderPlaylist() {
       playlist.innerHTML = "";
-      const selectedArtist = artistSelect.value;
+      const selectedType = typeSelect.value;
+      const query = searchInput.value.toLowerCase().trim();
 
       let filteredTracks = globalTracksList;
-      if (selectedArtist !== "ALL") {
-        filteredTracks = globalTracksList.filter(t => t.artistName === selectedArtist);
+
+      if (selectedType !== "ALL") {
+        filteredTracks = filteredTracks.filter(t => t.musicType === selectedType);
+      }
+
+      if (query !== "") {
+        filteredTracks = filteredTracks.filter(t => 
+          t.displayTitle.toLowerCase().includes(query) || 
+          t.musicType.toLowerCase().includes(query)
+        );
       }
 
       if (filteredTracks.length === 0) {
-        playlist.innerHTML = "<p style='text-align:center;'>No tracks found for selected artist.</p>";
+        playlist.innerHTML = "<p style='text-align:center;'>No matching tracks found.</p>";
+        progressBar.style.width = "100%";
+        progressText.innerText = "Showing 0 tracks";
         return;
       }
 
@@ -603,6 +787,7 @@
         div.innerHTML = `
           <div>
             <strong>${track.displayTitle}</strong>
+            <div style="font-size: 10px; opacity: 0.7;">Type: ${track.musicType}</div>
           </div>
           <button class="play-btn" onclick="playTrack('${track.url}', '${track.displayTitle}')">PLAY</button>
         `;
@@ -616,8 +801,9 @@
       });
     }
 
-    // Event listener for select element changes
-    artistSelect.addEventListener("change", renderPlaylist);
+    // Listeners for live searching and filtering
+    searchInput.addEventListener("input", renderPlaylist);
+    typeSelect.addEventListener("change", renderPlaylist);
 
     window.playTrack = function(url, title) {
       nowPlayingInfo.innerText = `Playing: ${title}`;
