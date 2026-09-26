@@ -162,7 +162,7 @@
       );
       background-size: 300% 300%;
       animation: rainbowGlow 6s ease infinite;
-      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 12px rgba(255, 0, 255, 0.5));
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 12px rgba(0, 255, 255, 0.5));
     }
 
     @keyframes rainbowGlow {
@@ -213,6 +213,39 @@
     select option {
       background-color: #000000;
       color: #ffffff;
+    }
+
+    /* Recommendation Box Popup for Music Type */
+    .type-recommendations {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background-color: var(--bg-color);
+      border: 1px solid var(--accent-color);
+      border-radius: 16px;
+      max-height: 140px;
+      overflow-y: auto;
+      margin-top: 4px;
+      display: none;
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .recommendation-item {
+      padding: 8px 16px;
+      font-size: 11px;
+      cursor: pointer;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+    }
+
+    .recommendation-item:last-child {
+      border-bottom: none;
+    }
+
+    .recommendation-item:hover {
+      background-color: var(--accent-color);
+      color: var(--bg-color);
     }
 
     .custom-file-wrapper {
@@ -414,7 +447,7 @@
       <!-- PAGE 3: UPLOAD -->
       <div id="page-upload" class="page-view">
         <h2>UPLOAD TO CLOUD (.MP3)</h2>
-        <form id="upload-form">
+        <form id="upload-form" autocomplete="off">
           <div class="glow-border-box">
             <input type="text" id="song-title" placeholder="Song Title" required>
           </div>
@@ -423,9 +456,10 @@
             <input type="text" id="artist-name" placeholder="Artist Name" required>
           </div>
 
-          <!-- Music Type Input Field -->
-          <div class="glow-border-box">
-            <input type="text" id="music-type" placeholder="Music Type (e.g. Pop, Rap, Lo-Fi, Uzbek Pop)" required>
+          <!-- Music Type Input Field with Auto-Recommendations -->
+          <div class="glow-border-box" style="position: relative;">
+            <input type="text" id="music-type" placeholder="Music Type (Type to get recommendations...)" required>
+            <div id="type-recommendations" class="type-recommendations"></div>
           </div>
           
           <div class="custom-file-wrapper glow-border-box">
@@ -475,6 +509,13 @@
     // Formspree Endpoint URL
     const FORMSPREE_ENDPOINT = "https://formspree.io/f/mzezajdz";
 
+    // Standard Music Recommendations List
+    const RECOMMENDED_TYPES = [
+      "Rap", "Uzbek Rap", "Pop", "Uzbek Pop", "Lo-Fi", 
+      "Rock", "Remix", "Chanson", "R&B", "Hip-Hop", 
+      "EDM", "Acoustic", "Instrumental", "Phonk", "Trap"
+    ];
+
     let supabaseClient;
     let globalTracksList = [];
 
@@ -497,6 +538,7 @@
     const songTitleInput = document.getElementById("song-title");
     const artistNameInput = document.getElementById("artist-name");
     const musicTypeInput = document.getElementById("music-type");
+    const typeRecommendationsBox = document.getElementById("type-recommendations");
     const fileInput = document.getElementById("file-input");
     const fileChosenText = document.getElementById("file-chosen-text");
     const uploadBtn = document.getElementById("upload-btn");
@@ -523,11 +565,51 @@
       return false;
     }
 
+    // Live Music Type Recommendation logic
+    musicTypeInput.addEventListener("input", function() {
+      const query = this.value.toLowerCase().trim();
+      typeRecommendationsBox.innerHTML = "";
+
+      if (query.length === 0) {
+        typeRecommendationsBox.style.display = "none";
+        return;
+      }
+
+      // Merge preset list with existing music types from uploaded songs
+      const existingCloudTypes = globalTracksList.map(t => t.musicType);
+      const combinedPool = [...new Set([...RECOMMENDED_TYPES, ...existingCloudTypes])];
+
+      const matches = combinedPool.filter(type => type.toLowerCase().includes(query));
+
+      if (matches.length > 0) {
+        matches.forEach(match => {
+          const item = document.createElement("div");
+          item.className = "recommendation-item";
+          item.textContent = match;
+          item.addEventListener("click", () => {
+            musicTypeInput.value = match;
+            typeRecommendationsBox.style.display = "none";
+          });
+          typeRecommendationsBox.appendChild(item);
+        });
+        typeRecommendationsBox.style.display = "block";
+      } else {
+        typeRecommendationsBox.style.display = "none";
+      }
+    });
+
+    // Hide recommendations box when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!musicTypeInput.contains(e.target) && !typeRecommendationsBox.contains(e.target)) {
+        typeRecommendationsBox.style.display = "none";
+      }
+    });
+
     // Auto-detect music type for existing songs without specified tag
     function detectMusicType(text) {
       const str = text.toLowerCase();
       if (str.includes("rap") || str.includes("hip hop") || str.includes("konsta") || str.includes("masa") || str.includes("shoxrux")) {
-        return "Rap";
+        return "Uzbek Rap";
       }
       if (str.includes("pop") || str.includes("rayhon") || str.includes("jackson") || str.includes("astley")) {
         return "Pop";
@@ -541,7 +623,7 @@
       if (str.includes("remix") || str.includes("mix")) {
         return "Remix";
       }
-      return "Pop / Variety";
+      return "Pop";
     }
 
     fileInput.addEventListener("change", function() {
