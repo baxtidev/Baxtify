@@ -171,12 +171,16 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Audio Player Section */
+    /* Audio Player Section & Glowing Border Fix */
     .player-wrapper {
       position: relative;
       width: 100%;
       margin-top: 10px;
       margin-bottom: 15px;
+      padding: 10px 14px;
+      background-color: var(--bg-color);
+      border-radius: 32px;
+      overflow: hidden;
     }
 
     audio {
@@ -187,6 +191,7 @@
       border-radius: 32px;
       background-color: var(--bg-color);
       filter: invert(100%) hue-rotate(90deg);
+      outline: none;
     }
 
     /* Inputs, Selects, and Textareas */
@@ -221,7 +226,7 @@
       top: 100%;
       left: 0;
       right: 0;
-      z-index: 10;
+      z-index: 20;
       background-color: var(--bg-color);
       border: 1px solid var(--accent-color);
       border-radius: 16px;
@@ -397,9 +402,9 @@
 
     <div class="card">
 
-      <!-- Universal Sticky Audio Player (Appears when track plays) -->
+      <!-- Universal Sticky Audio Player (Glow Border Fixed) -->
       <div id="player-wrapper" class="player-wrapper glow-border-box hidden">
-        <div id="now-playing-info" style="text-align: center; font-size: 13px; margin: 6px 0; color: var(--accent-color);">
+        <div id="now-playing-info" style="position: relative; z-index: 1; text-align: center; font-size: 13px; margin-bottom: 8px; color: var(--bg-color);">
           Select a track...
         </div>
         <audio id="audio-player" controls></audio>
@@ -409,7 +414,7 @@
       <div id="page-home" class="page-view active">
         <h2>WELCOME TO BAXTIFY</h2>
         <p style="text-align: center; font-size: 13px; line-height: 1.6;">
-          Your decentralized cloud audio station. Stream music globally or upload your own tracks directly to the network.
+          Global cloud audio station. Stream music globally or upload your own tracks directly to the network.
         </p>
         <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
           <button class="play-btn" onclick="switchPage('listen')">EXPLORE PLAYLIST</button>
@@ -456,7 +461,7 @@
             <input type="text" id="artist-name" placeholder="Artist Name" required>
           </div>
 
-          <!-- Music Type Input Field with Auto-Recommendations -->
+          <!-- Music Type Input Field with Phonk Included -->
           <div class="glow-border-box" style="position: relative;">
             <input type="text" id="music-type" placeholder="Music Type (Type to get recommendations...)" required>
             <div id="type-recommendations" class="type-recommendations"></div>
@@ -498,7 +503,7 @@
   </div>
 
   <footer>
-    <div>Dev Baxti Studio. 2026</div>
+    <div>BaxtiDev and AhmetEmre</div>
   </footer>
 
   <script>
@@ -509,11 +514,11 @@
     // Formspree Endpoint URL
     const FORMSPREE_ENDPOINT = "https://formspree.io/f/mzezajdz";
 
-    // Standard Music Recommendations List
+    // Standard Music Recommendations List (Phonk Added)
     const RECOMMENDED_TYPES = [
-      "Rap", "Uzbek Rap", "Pop", "Uzbek Pop", "Lo-Fi", 
-      "Rock", "Remix", "Chanson", "R&B", "Hip-Hop", 
-      "EDM", "Acoustic", "Instrumental", "Phonk", "Trap"
+      "Phonk", "Rap", "Uzbek Rap", "Pop", "Uzbek Pop", 
+      "Lo-Fi", "Rock", "Remix", "Chanson", "R&B", 
+      "Hip-Hop", "EDM", "Acoustic", "Instrumental", "Trap"
     ];
 
     let supabaseClient;
@@ -608,6 +613,9 @@
     // Auto-detect music type for existing songs without specified tag
     function detectMusicType(text) {
       const str = text.toLowerCase();
+      if (str.includes("phonk")) {
+        return "Phonk";
+      }
       if (str.includes("rap") || str.includes("hip hop") || str.includes("konsta") || str.includes("masa") || str.includes("shoxrux")) {
         return "Uzbek Rap";
       }
