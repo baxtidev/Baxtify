@@ -171,7 +171,7 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Audio Player Section & Glowing Border Fix */
+    /* Audio Player Section */
     .player-wrapper {
       position: relative;
       width: 100%;
@@ -395,6 +395,7 @@
     <button class="nav-btn" onclick="switchPage('listen')">LISTEN</button>
     <button class="nav-btn" onclick="switchPage('upload')">UPLOAD</button>
     <button class="nav-btn" onclick="switchPage('contact')">CONTACT</button>
+    <button class="nav-btn" onclick="switchPage('creators')">CREATORS</button>
   </nav>
 
   <div class="card-wrapper">
@@ -402,9 +403,9 @@
 
     <div class="card">
 
-      <!-- Universal Sticky Audio Player (Glow Border Fixed) -->
+      <!-- Universal Sticky Audio Player -->
       <div id="player-wrapper" class="player-wrapper glow-border-box hidden">
-        <div id="now-playing-info" style="position: relative; z-index: 1; text-align: center; font-size: 13px; margin-bottom: 8px; color: var(--bg-color);">
+        <div id="now-playing-info" style="position: relative; z-index: 1; text-align: center; font-size: 13px; margin-bottom: 8px; color: var(--accent-color);">
           Select a track...
         </div>
         <audio id="audio-player" controls></audio>
@@ -414,7 +415,7 @@
       <div id="page-home" class="page-view active">
         <h2>WELCOME TO BAXTIFY</h2>
         <p style="text-align: center; font-size: 13px; line-height: 1.6;">
-          Global cloud audio station. Stream music globally or upload your own tracks directly to the network.
+          Your decentralized cloud audio station. Stream music globally or upload your own tracks directly to the network.
         </p>
         <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
           <button class="play-btn" onclick="switchPage('listen')">EXPLORE PLAYLIST</button>
@@ -461,7 +462,7 @@
             <input type="text" id="artist-name" placeholder="Artist Name" required>
           </div>
 
-          <!-- Music Type Input Field with Phonk Included -->
+          <!-- Music Type Input Field with Auto-Recommendations -->
           <div class="glow-border-box" style="position: relative;">
             <input type="text" id="music-type" placeholder="Music Type (Type to get recommendations...)" required>
             <div id="type-recommendations" class="type-recommendations"></div>
@@ -479,7 +480,7 @@
         </form>
       </div>
 
-      <!-- PAGE 4: CONTACT (FORMSPREE INTEGRATED) -->
+      <!-- PAGE 4: CONTACT -->
       <div id="page-contact" class="page-view">
         <h2>GET IN TOUCH</h2>
         <form id="contact-form">
@@ -499,11 +500,26 @@
         </form>
       </div>
 
+      <!-- PAGE 5: CREATORS -->
+      <div id="page-creators" class="page-view">
+        <h2>CREATORS</h2>
+        <div style="text-align: center; font-size: 14px; line-height: 1.8; margin-top: 15px;">
+          <div style="margin-bottom: 20px;">
+            <div style="font-size: 16px; font-weight: bold; text-decoration: underline;">Creator:</div>
+            <div>Baxtidev</div>
+          </div>
+          <div>
+            <div style="font-size: 16px; font-weight: bold; text-decoration: underline;">Sponsor:</div>
+            <div>AhmetEmre</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <footer>
-    <div>BaxtiDev and AhmetEmre</div>
+    <div>BaxtiDev</div>
   </footer>
 
   <script>
@@ -514,7 +530,7 @@
     // Formspree Endpoint URL
     const FORMSPREE_ENDPOINT = "https://formspree.io/f/mzezajdz";
 
-    // Standard Music Recommendations List (Phonk Added)
+    // Standard Music Recommendations List
     const RECOMMENDED_TYPES = [
       "Phonk", "Rap", "Uzbek Rap", "Pop", "Uzbek Pop", 
       "Lo-Fi", "Rock", "Remix", "Chanson", "R&B", 
