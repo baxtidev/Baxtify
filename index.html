@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Baxtify - Global Cloud Player</title>
 
-  <!-- Website Favicon Icon (128x128) -->
+  <!-- Website Favicon Icon -->
   <link rel="icon" type="image/jpeg" sizes="128x128" href="baxtify.jpg">
   <link rel="apple-touch-icon" href="baxtify.jpg">
 
@@ -30,29 +30,120 @@
   <style>
     :root {
       --bg-color: #000000;
-      --accent-color: white;
+      --text-color: #ffffff;
+      --success-color: #11ff00;
       --font-family: 'Finger Paint', cursive;
     }
 
-    * { box-sizing: border-box; }
+    * { 
+      box-sizing: border-box; 
+      -webkit-user-select: none;
+      user-select: none;
+      color: #ffffff !important; /* Force pure white text globally */
+    }
+
+    input, textarea, select {
+      -webkit-user-select: text;
+      user-select: text;
+    }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--accent-color);
+      background-color: #000000 !important;
+      color: #ffffff !important;
       font-family: var(--font-family);
       margin: 0;
-      padding: 16px;
+      padding: 0 16px 16px 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
 
-    h1, h2 { 
-      text-shadow: 0 0 8px var(--accent-color); 
+    h1, h2, h3, p, span, div, label, option { 
+      color: #ffffff !important;
+      font-family: var(--font-family);
+    }
+
+    h1, h2 {
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.4); 
       text-align: center; 
       margin-bottom: 15px;
       margin-top: 0;
+    }
+
+    /* Top Sticky Header */
+    .top-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      background-color: #000000 !important;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      margin-bottom: 16px;
+    }
+
+    #brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #logo {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #000;
+    }
+
+    #brand-name {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0;
+      text-shadow: 0 0 5px #ffffff;
+    }
+
+    .admin-mode-btn {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      font-family: var(--font-family);
+      border: 1px solid #ffffff !important;
+      padding: 8px 14px;
+      border-radius: 32px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.2s ease;
+    }
+
+    .admin-mode-btn.active {
+      border-color: #11ff00 !important;
+      box-shadow: 0 0 8px #11ff00;
+    }
+
+    /* Toast Notification (Green Success Words) */
+    .toast-popup {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      background-color: #000000 !important;
+      border: 1px solid #11ff00 !important;
+      padding: 10px 20px;
+      border-radius: 32px;
+      box-shadow: 0 0 12px rgba(17, 255, 0, 0.4);
+      display: none;
+      text-align: center;
+    }
+
+    .toast-popup span {
+      color: #11ff00 !important; /* Strict Success Accent Color */
+      font-size: 12px;
+      font-weight: bold;
     }
 
     /* Navigation Bar */
@@ -65,10 +156,10 @@
     }
 
     .nav-btn {
-      background-color: var(--bg-color);
-      color: var(--accent-color);
+      background-color: #000000 !important;
+      color: #ffffff !important;
       font-family: var(--font-family);
-      border: 1px solid var(--accent-color);
+      border: 1px solid #ffffff !important;
       padding: 8px 14px;
       border-radius: 32px;
       cursor: pointer;
@@ -77,11 +168,11 @@
     }
 
     .nav-btn.active, .nav-btn:hover {
-      background-color: var(--accent-color);
-      color: var(--bg-color);
+      background-color: #ffffff !important;
+      color: #000000 !important;
     }
 
-    /* Main Card Container with Glowing Rainbow Border */
+    /* Main Card Container */
     .card-wrapper {
       position: relative;
       width: 90dvw;
@@ -98,18 +189,11 @@
       border-radius: 35px;
       background: radial-gradient(
         circle at 50% 50%,
-        #ff0000,
-        #ff7f00,
-        #ffff00,
-        #00ff00,
-        #00ffff,
-        #0000ff,
-        #8b00ff,
-        #ff0000
+        #ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff, #ff0000
       );
       background-size: 300% 300%;
       animation: rainbowGlow 6s ease infinite;
-      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 16px rgba(0, 255, 255, 0.6));
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
     }
 
     .card {
@@ -117,22 +201,16 @@
       z-index: 1;
       width: 100%;
       padding: 16px;
-      background-color: var(--bg-color);
+      background-color: #000000 !important;
       border-radius: 32px;
       display: flex;
       flex-direction: column;
     }
 
-    /* Page Views */
-    .page-view {
-      display: none;
-    }
+    .page-view { display: none; }
+    .page-view.active { display: block; }
 
-    .page-view.active {
-      display: block;
-    }
-
-    /* Reusable Wrapper for Glowing Rainbow Borders */
+    /* Border Boxes */
     .glow-border-box {
       position: relative;
       width: 100%;
@@ -143,26 +221,24 @@
     .glow-border-box::before {
       content: "";
       position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
       z-index: 0;
       border-radius: 34px;
       background: radial-gradient(
         circle at 50% 50%,
-        #ff0000,
-        #ff7f00,
-        #ffff00,
-        #00ff00,
-        #00ffff,
-        #0000ff,
-        #8b00ff,
-        #ff0000
+        #ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff, #ff0000
       );
       background-size: 300% 300%;
       animation: rainbowGlow 6s ease infinite;
-      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 12px rgba(0, 255, 255, 0.5));
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+    }
+
+    .plain-border-box {
+      position: relative;
+      width: 100%;
+      margin: 6px 0;
+      border-radius: 32px;
+      border: 1px solid #ffffff !important;
     }
 
     @keyframes rainbowGlow {
@@ -171,14 +247,14 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Audio Player Section */
+    /* Player Area */
     .player-wrapper {
       position: relative;
       width: 100%;
       margin-top: 10px;
       margin-bottom: 15px;
       padding: 10px 14px;
-      background-color: var(--bg-color);
+      background-color: #000000 !important;
       border-radius: 32px;
       overflow: hidden;
     }
@@ -189,19 +265,19 @@
       width: 100%;
       display: block;
       border-radius: 32px;
-      background-color: var(--bg-color);
-      filter: invert(100%) hue-rotate(90deg);
+      background-color: #000000 !important;
+      filter: invert(100%);
       outline: none;
     }
 
-    /* Inputs, Selects, and Textareas */
-    input[type="text"], input[type="email"], textarea, select {
+    /* Inputs */
+    input[type="text"], input[type="password"], input[type="email"], textarea, select {
       position: relative;
       z-index: 1;
       width: 100%;
-      background: var(--bg-color);
+      background: #000000 !important;
       border: none;
-      color: var(--accent-color);
+      color: #ffffff !important;
       font-family: var(--font-family);
       padding: 10px 16px;
       outline: none;
@@ -216,25 +292,22 @@
     }
 
     select option {
-      background-color: #000000;
-      color: #ffffff;
+      background-color: #000000 !important;
+      color: #ffffff !important;
     }
 
-    /* Recommendation Box Popup for Music Type */
+    /* Music Type Dropdown Popups */
     .type-recommendations {
       position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
+      top: 100%; left: 0; right: 0;
       z-index: 20;
-      background-color: var(--bg-color);
-      border: 1px solid var(--accent-color);
+      background-color: #000000 !important;
+      border: 1px solid #ffffff !important;
       border-radius: 16px;
       max-height: 140px;
       overflow-y: auto;
       margin-top: 4px;
       display: none;
-      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
     }
 
     .recommendation-item {
@@ -242,15 +315,12 @@
       font-size: 11px;
       cursor: pointer;
       border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
-    }
-
-    .recommendation-item:last-child {
-      border-bottom: none;
+      color: #ffffff !important;
     }
 
     .recommendation-item:hover {
-      background-color: var(--accent-color);
-      color: var(--bg-color);
+      background-color: #ffffff !important;
+      color: #000000 !important;
     }
 
     .custom-file-wrapper {
@@ -263,30 +333,30 @@
       z-index: 1;
       font-family: var(--font-family);
       font-size: small;
-      background: var(--bg-color);
+      background: #000000 !important;
       border: none;
       border-radius: 32px;
       padding: 10px 16px;
       display: block;
       width: 100%;
-      color: white;
+      color: #ffffff !important;
     }
 
     .file-name-status {
       font-size: 10px;
       text-align: center;
       margin-top: 6px;
-      color: var(--accent-color);
+      color: #ffffff !important;
       word-break: break-all;
     }
 
-    /* Action Buttons */
+    /* Buttons */
     button.submit-btn {
       position: relative;
       z-index: 1;
       width: 100%;
-      background-color: var(--bg-color);
-      color: var(--accent-color);
+      background-color: #000000 !important;
+      color: #ffffff !important;
       font-family: var(--font-family);
       border: none;
       padding: 12px;
@@ -296,17 +366,12 @@
       display: block;
     }
 
-    button.submit-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
     .play-btn {
       width: auto;
       padding: 6px 16px;
       margin: 0;
-      background-color: var(--accent-color);
-      color: var(--bg-color);
+      background-color: #ffffff !important;
+      color: #000000 !important;
       font-family: var(--font-family);
       border: none;
       font-weight: bold;
@@ -314,7 +379,17 @@
       border-radius: 32px;
     }
 
-    /* Progress Bar */
+    .delete-btn {
+      background-color: #ff3333 !important;
+      color: #ffffff !important;
+    }
+
+    .cancel-btn {
+      background-color: #444444 !important;
+      color: #ffffff !important;
+    }
+
+    /* Progress Container */
     .progress-container {
       position: relative;
       z-index: 1;
@@ -328,9 +403,9 @@
     .progress-bar {
       height: 100%;
       width: 0%;
-      background-color: var(--accent-color);
+      background-color: #ffffff !important;
       transition: width 0.3s ease-in-out;
-      box-shadow: 0 0 12px var(--accent-color);
+      box-shadow: 0 0 10px #ffffff;
       border-radius: 32px;
     }
 
@@ -339,14 +414,42 @@
       text-align: center;
       margin-bottom: 12px;
       letter-spacing: 0.5px;
+      color: #ffffff !important;
     }
 
     .song-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px dashed var(--accent-color);
+      border-bottom: 1px dashed #ffffff !important;
       padding: 10px 0;
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: 300;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-content {
+      background-color: #000000 !important;
+      width: 100%;
+      max-width: 360px;
+      padding: 20px;
+      border-radius: 28px;
+      border: 1px solid #ffffff !important;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .status-text {
@@ -356,37 +459,37 @@
       word-break: break-all;
     }
 
+    .success-msg {
+      color: #11ff00 !important; /* Force green color for success words */
+    }
+
     footer {
       margin-top: auto;
       padding: 20px 0 10px 0;
       text-align: center;
       font-size: 14px;
       letter-spacing: 1px;
-      text-shadow: 0 0 5px var(--accent-color);
+      text-shadow: 0 0 5px #ffffff;
+      color: #ffffff !important;
     }
 
     .hidden { display: none !important; }
-
-    #logo {
-      height: 50px;
-      width: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    #brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
   </style>
 </head>
 <body>
 
-  <div id="brand">
-    <img src="baxtify.jpg" id="logo" alt="Baxtify Logo">
-    <h1>Baxtify</h1>
+  <!-- Sticky Top Header -->
+  <header class="top-header">
+    <div id="brand">
+      <img src="baxtify.jpg" id="logo" alt="Baxtify Logo">
+      <h1 id="brand-name">Baxtify</h1>
+    </div>
+    <button id="admin-toggle-btn" class="admin-mode-btn" onclick="openPasswordModal()">Admin mode</button>
+  </header>
+
+  <!-- Global Success Toast Popup -->
+  <div id="toast" class="toast-popup">
+    <span id="toast-message">Admin mode turned on</span>
   </div>
 
   <!-- Navigation Menu -->
@@ -405,7 +508,7 @@
 
       <!-- Universal Sticky Audio Player -->
       <div id="player-wrapper" class="player-wrapper glow-border-box hidden">
-        <div id="now-playing-info" style="position: relative; z-index: 1; text-align: center; font-size: 13px; margin-bottom: 8px; color: var(--accent-color);">
+        <div id="now-playing-info" style="position: relative; z-index: 1; text-align: center; font-size: 13px; margin-bottom: 8px;">
           Select a track...
         </div>
         <audio id="audio-player" controls></audio>
@@ -427,7 +530,7 @@
       <div id="page-listen" class="page-view">
         <h2>GLOBAL PLAYLIST</h2>
 
-        <!-- Search Bar with Live Filtering -->
+        <!-- Search Bar -->
         <div class="glow-border-box">
           <input type="text" id="search-input" placeholder="Search title, artist or type...">
         </div>
@@ -518,6 +621,47 @@
     </div>
   </div>
 
+  <!-- Modal 1: Password Prompt Modal -->
+  <div id="password-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3 style="text-align: center; margin-top: 0;">ENTER ADMIN PASSWORD</h3>
+      <div class="plain-border-box">
+        <input type="password" id="promo-input" placeholder="Password...">
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 10px;">
+        <button class="submit-btn play-btn" onclick="verifyPassword()">SUBMIT</button>
+        <button class="submit-btn cancel-btn" onclick="closePasswordModal()">CANCEL</button>
+      </div>
+      <div id="promo-status" class="status-text" style="color: #ff3333 !important; margin-top: 8px;"></div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Track Editing & Deleting Panel -->
+  <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3 style="text-align: center; margin-top: 0;">EDIT TRACK DETAILS</h3>
+      
+      <div class="plain-border-box">
+        <input type="text" id="edit-title" placeholder="Song Title">
+      </div>
+      
+      <div class="plain-border-box">
+        <input type="text" id="edit-artist" placeholder="Artist Name">
+      </div>
+
+      <div class="plain-border-box">
+        <input type="text" id="edit-type" placeholder="Music Type">
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+        <button class="submit-btn play-btn" onclick="saveTrackEdits()">SAVE CHANGES</button>
+        <button class="submit-btn delete-btn" onclick="deleteTrack()">DELETE SONG</button>
+        <button class="submit-btn cancel-btn" onclick="closeEditModal()">CANCEL</button>
+      </div>
+      <div id="edit-status" class="status-text" style="margin-top: 8px;"></div>
+    </div>
+  </div>
+
   <footer>
     <div>BaxtiDev</div>
   </footer>
@@ -526,11 +670,9 @@
     // Configuration
     const SUPABASE_URL = "https://cylpyvhqpoywwqbhtmsm.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5bHB5dmhxcG95d3dxYmh0bXNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NDg1NDEsImV4cCI6MjEwMzEyNDU0MX0.vJpmkBKaTkh1bvZpWcdlnccjDdT1mGUCFcyc2Osjwic";
-    
-    // Formspree Endpoint URL
     const FORMSPREE_ENDPOINT = "https://formspree.io/f/mzezajdz";
+    const ADMIN_PASSWORD = "BBB2507";
 
-    // Standard Music Recommendations List
     const RECOMMENDED_TYPES = [
       "Phonk", "Rap", "Uzbek Rap", "Pop", "Uzbek Pop", 
       "Lo-Fi", "Rock", "Remix", "Chanson", "R&B", 
@@ -539,22 +681,24 @@
 
     let supabaseClient;
     let globalTracksList = [];
+    let selectedTrackForAdmin = null;
+    let isAdminMode = false;
 
-    // Page Switching Logic
-    function switchPage(pageId) {
-      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    // UI Elements
+    const adminToggleBtn = document.getElementById("admin-toggle-btn");
+    const passwordModal = document.getElementById("password-modal");
+    const editModal = document.getElementById("edit-modal");
+    const promoInput = document.getElementById("promo-input");
+    const promoStatus = document.getElementById("promo-status");
 
-      const selectedPage = document.getElementById(`page-${pageId}`);
-      if (selectedPage) selectedPage.classList.add('active');
+    const editTitle = document.getElementById("edit-title");
+    const editArtist = document.getElementById("edit-artist");
+    const editType = document.getElementById("edit-type");
+    const editStatus = document.getElementById("edit-status");
 
-      const activeNavBtn = Array.from(document.querySelectorAll('.nav-btn')).find(
-        btn => btn.getAttribute('onclick').includes(pageId)
-      );
-      if (activeNavBtn) activeNavBtn.classList.add('active');
-    }
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toast-message");
 
-    // Elements
     const uploadForm = document.getElementById("upload-form");
     const songTitleInput = document.getElementById("song-title");
     const artistNameInput = document.getElementById("artist-name");
@@ -578,6 +722,29 @@
     const contactBtn = document.getElementById("contact-btn");
     const contactStatus = document.getElementById("contact-status");
 
+    // Success Toast Popup Helper
+    function showSuccessToast(messageText) {
+      toastMessage.innerText = messageText;
+      toast.style.display = "block";
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 3000);
+    }
+
+    // Page Switch
+    function switchPage(pageId) {
+      document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      const selectedPage = document.getElementById(`page-${pageId}`);
+      if (selectedPage) selectedPage.classList.add('active');
+
+      const activeNavBtn = Array.from(document.querySelectorAll('.nav-btn')).find(
+        btn => btn.getAttribute('onclick').includes(pageId)
+      );
+      if (activeNavBtn) activeNavBtn.classList.add('active');
+    }
+
     function initSupabase() {
       if (window.supabase && window.supabase.createClient) {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -586,7 +753,53 @@
       return false;
     }
 
-    // Live Music Type Recommendation logic
+    // Admin Mode Modal and Verification
+    function openPasswordModal() {
+      if (isAdminMode) {
+        isAdminMode = false;
+        adminToggleBtn.innerText = "Admin mode";
+        adminToggleBtn.classList.remove("active");
+        showSuccessToast("Admin mode turned off");
+        return;
+      }
+      promoInput.value = "";
+      promoStatus.innerText = "";
+      passwordModal.classList.remove("hidden");
+    }
+
+    function closePasswordModal() {
+      passwordModal.classList.add("hidden");
+    }
+
+    function verifyPassword() {
+      if (promoInput.value.trim() === ADMIN_PASSWORD) {
+        isAdminMode = true;
+        adminToggleBtn.innerText = "Admin mode ON";
+        adminToggleBtn.classList.add("active");
+        closePasswordModal();
+        showSuccessToast("Admin mode turned on");
+      } else {
+        promoStatus.innerText = "Incorrect Password!";
+      }
+    }
+
+    // Edit Panel Functions
+    function openEditModal(track) {
+      selectedTrackForAdmin = track;
+      editTitle.value = track.songTitle;
+      editArtist.value = track.artistName;
+      editType.value = track.musicType;
+      editStatus.innerText = "";
+      editStatus.className = "status-text";
+      editModal.classList.remove("hidden");
+    }
+
+    function closeEditModal() {
+      editModal.classList.add("hidden");
+      selectedTrackForAdmin = null;
+    }
+
+    // Live Music Recommendations
     musicTypeInput.addEventListener("input", function() {
       const query = this.value.toLowerCase().trim();
       typeRecommendationsBox.innerHTML = "";
@@ -596,10 +809,8 @@
         return;
       }
 
-      // Merge preset list with existing music types from uploaded songs
       const existingCloudTypes = globalTracksList.map(t => t.musicType);
       const combinedPool = [...new Set([...RECOMMENDED_TYPES, ...existingCloudTypes])];
-
       const matches = combinedPool.filter(type => type.toLowerCase().includes(query));
 
       if (matches.length > 0) {
@@ -619,34 +830,20 @@
       }
     });
 
-    // Hide recommendations box when clicking outside
     document.addEventListener("click", (e) => {
       if (!musicTypeInput.contains(e.target) && !typeRecommendationsBox.contains(e.target)) {
         typeRecommendationsBox.style.display = "none";
       }
     });
 
-    // Auto-detect music type for existing songs without specified tag
     function detectMusicType(text) {
       const str = text.toLowerCase();
-      if (str.includes("phonk")) {
-        return "Phonk";
-      }
-      if (str.includes("rap") || str.includes("hip hop") || str.includes("konsta") || str.includes("masa") || str.includes("shoxrux")) {
-        return "Uzbek Rap";
-      }
-      if (str.includes("pop") || str.includes("rayhon") || str.includes("jackson") || str.includes("astley")) {
-        return "Pop";
-      }
-      if (str.includes("lofi") || str.includes("lo-fi") || str.includes("chill")) {
-        return "Lo-Fi";
-      }
-      if (str.includes("rock") || str.includes("band")) {
-        return "Rock";
-      }
-      if (str.includes("remix") || str.includes("mix")) {
-        return "Remix";
-      }
+      if (str.includes("phonk")) return "Phonk";
+      if (str.includes("rap") || str.includes("hip hop") || str.includes("konsta") || str.includes("masa") || str.includes("shoxrux")) return "Uzbek Rap";
+      if (str.includes("pop") || str.includes("rayhon") || str.includes("jackson") || str.includes("astley")) return "Pop";
+      if (str.includes("lofi") || str.includes("lo-fi") || str.includes("chill")) return "Lo-Fi";
+      if (str.includes("rock") || str.includes("band")) return "Rock";
+      if (str.includes("remix") || str.includes("mix")) return "Remix";
       return "Pop";
     }
 
@@ -665,7 +862,6 @@
         }
 
         musicTypeInput.value = detectMusicType(baseName);
-
         fileChosenText.innerText = `Selected: ${file.name}`;
         fileChosenText.style.display = "block";
       } else {
@@ -686,27 +882,24 @@
             loadGlobalPlaylist();
           } else if (attempts >= 4) {
             clearInterval(interval);
-            playlist.innerHTML = "<p style='color:#ff3333; text-align:center;'>CDN network blocked or restricted. Please open in Chrome browser.</p>";
+            playlist.innerHTML = "<p style='text-align:center;'>CDN network blocked or restricted.</p>";
           }
         }, 800);
       }
     });
 
-    // Upload Handler
+    // Upload Form
     uploadForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const file = fileInput.files[0];
 
-      if (!supabaseClient) {
-        if (!initSupabase()) {
-          uploadStatus.style.color = "#ff3333";
-          uploadStatus.innerText = "Please refresh the page.";
-          return;
-        }
+      if (!supabaseClient && !initSupabase()) {
+        uploadStatus.innerText = "Please refresh the page.";
+        return;
       }
 
       uploadBtn.disabled = true;
-      uploadStatus.style.color = "#11ff00";
+      uploadStatus.className = "status-text";
       uploadStatus.innerText = "Uploading .mp3 to Baxtify...";
 
       try {
@@ -719,7 +912,6 @@
         const cleanArtist = customArtist.replace(/[^a-zA-Z0-9]/g, "_");
         const cleanType = customType.replace(/[^a-zA-Z0-9]/g, "_");
         
-        // Format: TYPE_--_ARTIST_-_TITLE_TIMESTAMP.mp3
         const fileName = `${cleanType}_--_${cleanArtist}_-_${cleanTitle}_${Date.now()}.${fileExt}`;
 
         const { error: uploadError } = await supabaseClient.storage
@@ -728,15 +920,17 @@
 
         if (uploadError) throw uploadError;
 
-        uploadStatus.innerText = "Upload complete! Updating playlist...";
         uploadForm.reset();
         fileChosenText.style.display = "none";
+        uploadStatus.className = "status-text success-msg";
+        uploadStatus.innerText = "uploaded successfully";
+
+        showSuccessToast("uploaded successfully");
 
         setTimeout(() => {
           loadGlobalPlaylist();
-          uploadStatus.innerText = "Track synced successfully!";
           switchPage('listen');
-        }, 1000);
+        }, 800);
 
       } catch (err) {
         uploadStatus.style.color = "#ff3333";
@@ -746,11 +940,11 @@
       }
     });
 
-    // Contact Form Handler
+    // Contact Form
     contactForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       contactBtn.disabled = true;
-      contactStatus.style.color = "#11ff00";
+      contactStatus.className = "status-text";
       contactStatus.innerText = "Sending message...";
 
       const data = new FormData(contactForm);
@@ -763,8 +957,8 @@
         });
 
         if (response.ok) {
-          contactStatus.style.color = "#11ff00";
-          contactStatus.innerText = "send successfully";
+          contactStatus.className = "status-text success-msg";
+          contactStatus.innerText = "sent successfully";
           contactForm.reset();
         } else {
           const resData = await response.json();
@@ -778,11 +972,9 @@
       }
     });
 
-    // Load Playlist from Storage
+    // Load Playlist
     async function loadGlobalPlaylist() {
-      if (!supabaseClient) {
-        if (!initSupabase()) return;
-      }
+      if (!supabaseClient && !initSupabase()) return;
 
       try {
         const { data: files, error } = await supabaseClient.storage
@@ -792,11 +984,9 @@
         if (error) throw error;
 
         playlist.innerHTML = "";
-
         const validFiles = files ? files.filter(f => f.name && f.name !== '.emptyFolderPlaceholder' && !f.name.startsWith('.')) : [];
-        const totalFiles = validFiles.length;
-
-        if (totalFiles === 0) {
+        
+        if (validFiles.length === 0) {
           progressBar.style.width = "100%";
           progressText.innerText = "Loaded 100% (0 / 0 tracks)";
           playlist.innerHTML = "<p style='text-align:center;'>No tracks found in cloud storage.</p>";
@@ -808,24 +998,42 @@
             .from('songs')
             .getPublicUrl(file.name);
 
-          let fileNameRaw = file.name.replace(/_\d+\.[^/.]+$/, "");
-          let musicType = "";
-          let displayTitle = fileNameRaw.replace(/_/g, " ");
+          let fileNameRaw = file.name.replace(/\.[^/.]+$/, "");
+          let timestamp = "";
 
-          // Check if filename contains music type indicator (_--_)
+          const timestampMatch = fileNameRaw.match(/_(\d+)$/);
+          if (timestampMatch) {
+            timestamp = timestampMatch[1];
+            fileNameRaw = fileNameRaw.replace(/_\d+$/, "");
+          }
+
+          let musicType = "Pop";
+          let artistName = "Unknown Artist";
+          let songTitle = fileNameRaw.replace(/_/g, " ");
+
           if (fileNameRaw.includes("_--_")) {
             const parts = fileNameRaw.split("_--_");
             musicType = parts[0].replace(/_/g, " ").trim();
-            displayTitle = parts[1].replace(/_/g, " ").trim();
+            const rest = parts[1];
+            if (rest.includes("_-_")) {
+              const subParts = rest.split("_-_");
+              artistName = subParts[0].replace(/_/g, " ").trim();
+              songTitle = subParts.slice(1).join(" ").replace(/_/g, " ").trim();
+            } else {
+              songTitle = rest.replace(/_/g, " ").trim();
+            }
           } else {
-            // Smart auto-detection for older uploaded tracks
-            musicType = detectMusicType(displayTitle);
+            musicType = detectMusicType(songTitle);
           }
 
           return {
+            rawName: file.name,
             url: urlData.publicUrl,
-            displayTitle: displayTitle,
-            musicType: musicType
+            songTitle: songTitle,
+            artistName: artistName,
+            musicType: musicType,
+            timestamp: timestamp,
+            displayTitle: `${artistName} - ${songTitle}`
           };
         });
 
@@ -833,7 +1041,7 @@
         renderPlaylist();
 
       } catch (err) {
-        playlist.innerHTML = `<p style='text-align:center; color:#ff3333;'>Sync Error: ${err.message || JSON.stringify(err)}</p>`;
+        playlist.innerHTML = `<p style='text-align:center; color:#ff3333 !important;'>Sync Error: ${err.message || JSON.stringify(err)}</p>`;
         progressText.innerText = "Loaded 0% (Connection Error)";
         progressBar.style.width = "0%";
       }
@@ -858,7 +1066,6 @@
       }
     }
 
-    // Dynamic Search & Filter Function
     function renderPlaylist() {
       playlist.innerHTML = "";
       const selectedType = typeSelect.value;
@@ -893,10 +1100,33 @@
         div.innerHTML = `
           <div>
             <strong>${track.displayTitle}</strong>
-            <div style="font-size: 10px; opacity: 0.7;">Type: ${track.musicType}</div>
+            <div style="font-size: 10px; opacity: 0.8;">Type: ${track.musicType}</div>
           </div>
-          <button class="play-btn" onclick="playTrack('${track.url}', '${track.displayTitle}')">PLAY</button>
+          <button class="play-btn" onclick="event.stopPropagation(); playTrack('${track.url}', '${track.displayTitle}')">PLAY</button>
         `;
+
+        // Hold gesture (Exactly 1 second = 1000ms)
+        let holdTimer;
+
+        const startHold = () => {
+          if (!isAdminMode) return; // Active only when Admin mode is turned on
+          holdTimer = setTimeout(() => {
+            openEditModal(track);
+          }, 1000);
+        };
+
+        const clearHold = () => {
+          if (holdTimer) clearTimeout(holdTimer);
+        };
+
+        div.addEventListener("mousedown", startHold);
+        div.addEventListener("mouseup", clearHold);
+        div.addEventListener("mouseleave", clearHold);
+
+        div.addEventListener("touchstart", startHold, { passive: true });
+        div.addEventListener("touchend", clearHold);
+        div.addEventListener("touchcancel", clearHold);
+
         playlist.appendChild(div);
 
         loadedCount++;
@@ -907,7 +1137,101 @@
       });
     }
 
-    // Listeners for live searching and filtering
+    // Save Edits in Storage
+    async function saveTrackEdits() {
+      if (!selectedTrackForAdmin || !supabaseClient) return;
+
+      const newTitle = editTitle.value.trim();
+      const newArtist = editArtist.value.trim();
+      const newType = editType.value.trim();
+
+      if (!newTitle || !newArtist || !newType) {
+        editStatus.style.color = "#ff3333";
+        editStatus.innerText = "All fields are required.";
+        return;
+      }
+
+      editStatus.className = "status-text";
+      editStatus.innerText = "Saving changes...";
+
+      try {
+        const fileExt = selectedTrackForAdmin.rawName.split('.').pop();
+        const cleanTitle = newTitle.replace(/[^a-zA-Z0-9]/g, "_");
+        const cleanArtist = newArtist.replace(/[^a-zA-Z0-9]/g, "_");
+        const cleanType = newType.replace(/[^a-zA-Z0-9]/g, "_");
+        const timeStamp = selectedTrackForAdmin.timestamp || Date.now();
+        
+        const newFileName = `${cleanType}_--_${cleanArtist}_-_${cleanTitle}_${timeStamp}.${fileExt}`;
+
+        if (selectedTrackForAdmin.rawName !== newFileName) {
+          const { data: audioBlob, error: downloadError } = await supabaseClient.storage
+            .from('songs')
+            .download(selectedTrackForAdmin.rawName);
+
+          if (downloadError) throw downloadError;
+
+          const { error: uploadError } = await supabaseClient.storage
+            .from('songs')
+            .upload(newFileName, audioBlob, { contentType: 'audio/mpeg', upsert: true });
+
+          if (uploadError) throw uploadError;
+
+          await supabaseClient.storage
+            .from('songs')
+            .remove([selectedTrackForAdmin.rawName]);
+        }
+
+        editStatus.className = "status-text success-msg";
+        editStatus.innerText = "edited successfully";
+
+        showSuccessToast("edited successfully");
+
+        setTimeout(() => {
+          closeEditModal();
+          loadGlobalPlaylist();
+        }, 800);
+
+      } catch (err) {
+        editStatus.style.color = "#ff3333";
+        editStatus.innerText = `Update failed: ${err.message || JSON.stringify(err)}`;
+      }
+    }
+
+    // Delete Track from Storage
+    async function deleteTrack() {
+      if (!selectedTrackForAdmin || !supabaseClient) return;
+
+      if (!confirm(`Are you sure you want to delete "${selectedTrackForAdmin.displayTitle}"?`)) return;
+
+      editStatus.className = "status-text";
+      editStatus.innerText = "Deleting song...";
+
+      try {
+        const filePath = selectedTrackForAdmin.rawName;
+
+        const { error } = await supabaseClient.storage
+          .from('songs')
+          .remove([filePath]);
+
+        if (error) throw error;
+
+        editStatus.className = "status-text success-msg";
+        editStatus.innerText = "deleted successfully";
+
+        showSuccessToast("deleted successfully");
+
+        setTimeout(() => {
+          closeEditModal();
+          loadGlobalPlaylist();
+        }, 800);
+
+      } catch (err) {
+        editStatus.style.color = "#ff3333";
+        editStatus.innerText = `Delete failed: ${err.message || JSON.stringify(err)}`;
+      }
+    }
+
+    // Listeners
     searchInput.addEventListener("input", renderPlaylist);
     typeSelect.addEventListener("change", renderPlaylist);
 
