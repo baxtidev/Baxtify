@@ -39,7 +39,7 @@
       box-sizing: border-box; 
       -webkit-user-select: none;
       user-select: none;
-      color: #ffffff !important; /* Force pure white text globally */
+      color: #ffffff !important;
     }
 
     input, textarea, select {
@@ -124,7 +124,7 @@
       box-shadow: 0 0 8px #11ff00;
     }
 
-    /* Toast Notification (Green Success Words) */
+    /* Toast Notification */
     .toast-popup {
       position: fixed;
       top: 70px;
@@ -141,7 +141,7 @@
     }
 
     .toast-popup span {
-      color: #11ff00 !important; /* Strict Success Accent Color */
+      color: #11ff00 !important;
       font-size: 12px;
       font-weight: bold;
     }
@@ -364,6 +364,8 @@
       cursor: pointer;
       border-radius: 32px;
       display: block;
+      text-align: center;
+      text-decoration: none;
     }
 
     .play-btn {
@@ -460,7 +462,7 @@
     }
 
     .success-msg {
-      color: #11ff00 !important; /* Force green color for success words */
+      color: #11ff00 !important;
     }
 
     footer {
@@ -585,22 +587,10 @@
 
       <!-- PAGE 4: CONTACT -->
       <div id="page-contact" class="page-view">
-        <h2>GET IN TOUCH</h2>
-        <form id="contact-form">
-          <div class="glow-border-box">
-            <input type="text" name="name" placeholder="Your Name" required>
-          </div>
-          <div class="glow-border-box">
-            <input type="email" name="email" placeholder="Your Email" required>
-          </div>
-          <div class="glow-border-box">
-            <textarea name="message" placeholder="Your Message..." required></textarea>
-          </div>
-          <div class="glow-border-box" style="margin-top: 10px;">
-            <button type="submit" id="contact-btn" class="submit-btn">SEND MESSAGE</button>
-          </div>
-          <div id="contact-status" class="status-text"></div>
-        </form>
+        <h2>CONTACT</h2>
+        <p style="text-align: center; font-size: 13px; line-height: 1.6; margin: 20px 0;">
+          If you have a recommendations, ideas about my website or want to send a message to me, please contact this email adress: behzodpolvonov65@gmail.com
+        </p>
       </div>
 
       <!-- PAGE 5: CREATORS -->
@@ -669,8 +659,7 @@
   <script>
     // Configuration
     const SUPABASE_URL = "https://cylpyvhqpoywwqbhtmsm.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5bHB5dmhxcG95d3dxYmh0bXNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NDg1NDEsImV4cCI6MjEwMzEyNDU0MX0.vJpmkBKaTkh1bvZpWcdlnccjDdT1mGUCFcyc2Osjwic";
-    const FORMSPREE_ENDPOINT = "https://formspree.io/f/mzezajdz";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5bHB5dmhxcG95d3dxYmh0bXNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NDg1NDEsImV4cCI6MjE0MzEyNDU0MX0.vJpmkBKaTkh1bvZpWcdlnccjDdT1mGUCFcyc2Osjwic";
     const ADMIN_PASSWORD = "BBB2507";
 
     const RECOMMENDED_TYPES = [
@@ -717,10 +706,6 @@
     const nowPlayingInfo = document.getElementById("now-playing-info");
     const progressBar = document.getElementById("progress-bar");
     const progressText = document.getElementById("progress-text");
-
-    const contactForm = document.getElementById("contact-form");
-    const contactBtn = document.getElementById("contact-btn");
-    const contactStatus = document.getElementById("contact-status");
 
     // Success Toast Popup Helper
     function showSuccessToast(messageText) {
@@ -940,38 +925,6 @@
       }
     });
 
-    // Contact Form
-    contactForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      contactBtn.disabled = true;
-      contactStatus.className = "status-text";
-      contactStatus.innerText = "Sending message...";
-
-      const data = new FormData(contactForm);
-
-      try {
-        const response = await fetch(FORMSPREE_ENDPOINT, {
-          method: 'POST',
-          body: data,
-          headers: { 'Accept': 'application/json' }
-        });
-
-        if (response.ok) {
-          contactStatus.className = "status-text success-msg";
-          contactStatus.innerText = "sent successfully";
-          contactForm.reset();
-        } else {
-          const resData = await response.json();
-          throw new Error(resData.error || "Submission failed");
-        }
-      } catch (err) {
-        contactStatus.style.color = "#ff3333";
-        contactStatus.innerText = `Error: ${err.message}`;
-      } finally {
-        contactBtn.disabled = false;
-      }
-    });
-
     // Load Playlist
     async function loadGlobalPlaylist() {
       if (!supabaseClient && !initSupabase()) return;
@@ -1105,11 +1058,11 @@
           <button class="play-btn" onclick="event.stopPropagation(); playTrack('${track.url}', '${track.displayTitle}')">PLAY</button>
         `;
 
-        // Hold gesture (Exactly 1 second = 1000ms)
+        // Hold gesture (1 second)
         let holdTimer;
 
         const startHold = () => {
-          if (!isAdminMode) return; // Active only when Admin mode is turned on
+          if (!isAdminMode) return;
           holdTimer = setTimeout(() => {
             openEditModal(track);
           }, 1000);
